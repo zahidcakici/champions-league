@@ -145,26 +145,26 @@ func (s *simulationService) simulateMatch(homeTeam, awayTeam *models.Team) (int,
 }
 
 // generateGoals generates a realistic goal count using a simplified Poisson-like distribution - Old method
-func (s *simulationService) generateGoals(expectedGoals float64) int {
-	goals := 0
+// func (s *simulationService) generateGoals(expectedGoals float64) int {
+// 	goals := 0
 
-	// Simulate multiple "chances" to score
-	chances := 10
-	scoreProbability := expectedGoals / float64(chances)
+// 	// Simulate multiple "chances" to score
+// 	chances := 10
+// 	scoreProbability := expectedGoals / float64(chances)
 
-	for i := 0; i < chances; i++ {
-		if rand.Float64() < scoreProbability {
-			goals++
-		}
-	}
+// 	for i := 0; i < chances; i++ {
+// 		if rand.Float64() < scoreProbability {
+// 			goals++
+// 		}
+// 	}
 
-	// Cap at reasonable maximum
-	if goals > maxGoalsPerTeam {
-		goals = maxGoalsPerTeam
-	}
+// 	// Cap at reasonable maximum
+// 	if goals > maxGoalsPerTeam {
+// 		goals = maxGoalsPerTeam
+// 	}
 
-	return goals
-}
+// 	return goals
+// }
 
 // generateGoalsPoisson uses Poisson distribution for realistic goal counts
 // This models the discrete nature of goals where:

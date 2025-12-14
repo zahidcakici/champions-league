@@ -86,41 +86,6 @@ func TestSimulateMatchEqualTeams(t *testing.T) {
 	}
 }
 
-func TestGenerateGoals(t *testing.T) {
-	service := &simulationService{}
-
-	// Test with different expected goals
-	testCases := []struct {
-		expectedGoals float64
-		minGoals      int
-		maxGoals      int
-	}{
-		{0.5, 0, 7},
-		{1.5, 0, 7},
-		{2.5, 0, 7},
-		{3.0, 0, 7},
-	}
-
-	for _, tc := range testCases {
-		totalGoals := 0
-		iterations := 1000
-
-		for i := 0; i < iterations; i++ {
-			goals := service.generateGoals(tc.expectedGoals)
-
-			if goals < tc.minGoals || goals > tc.maxGoals {
-				t.Errorf("Goals %d outside expected range [%d, %d] for expectedGoals=%.1f",
-					goals, tc.minGoals, tc.maxGoals, tc.expectedGoals)
-			}
-
-			totalGoals += goals
-		}
-
-		avgGoals := float64(totalGoals) / float64(iterations)
-		t.Logf("Expected goals: %.1f, Average actual: %.2f", tc.expectedGoals, avgGoals)
-	}
-}
-
 func TestHomeAdvantage(t *testing.T) {
 	service := &simulationService{}
 
