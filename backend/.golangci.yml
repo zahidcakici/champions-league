@@ -1,0 +1,54 @@
+# golangci-lint configuration v2
+# https://golangci-lint.run/usage/configuration/
+
+version: "2"
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+  tests: false
+
+linters:
+  default: standard
+  enable:
+    - gocritic
+    - misspell
+    - unconvert
+    - unparam
+  settings:
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+      disabled-checks:
+        - hugeParam
+        - ifElseChain
+        - rangeValCopy
+        - nestingReduce
+        - unnamedResult
+    misspell:
+      locale: US
+
+formatters:
+  enable:
+    - gofumpt
+  settings:
+    gofumpt:
+      extra-rules: true
+
+output:
+  formats:
+    text:
+      path: stdout
+      colors: true
+  sort-order:
+    - linter
+    - file

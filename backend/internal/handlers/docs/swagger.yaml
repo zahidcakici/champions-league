@@ -1,0 +1,497 @@
+basePath: /api
+definitions:
+  internal_handlers.APIErrorResponse:
+    description: Standard API error response
+    properties:
+      error:
+        example: true
+        type: boolean
+      message:
+        example: Something went wrong
+        type: string
+    type: object
+  internal_handlers.ChampionshipPredictionResponse:
+    description: Championship prediction for a team
+    properties:
+      percentage:
+        example: 45.5
+        type: number
+      teamId:
+        example: 1
+        type: integer
+      teamName:
+        example: Manchester City
+        type: string
+    type: object
+  internal_handlers.FixturesListResponse:
+    description: List of all fixtures
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_handlers.MatchResponse'
+        type: array
+      success:
+        example: true
+        type: boolean
+    type: object
+  internal_handlers.LeagueStateResponse:
+    description: Current league state
+    properties:
+      completed:
+        example: false
+        type: boolean
+      currentWeek:
+        example: 3
+        type: integer
+      fixturesCreated:
+        example: true
+        type: boolean
+      started:
+        example: true
+        type: boolean
+      totalWeeks:
+        example: 6
+        type: integer
+    type: object
+  internal_handlers.MatchResponse:
+    description: Match information
+    properties:
+      awayScore:
+        example: 1
+        type: integer
+      awayTeam:
+        $ref: '#/definitions/internal_handlers.TeamResponse'
+      homeScore:
+        example: 2
+        type: integer
+      homeTeam:
+        $ref: '#/definitions/internal_handlers.TeamResponse'
+      id:
+        example: 1
+        type: integer
+      played:
+        example: true
+        type: boolean
+      week:
+        example: 1
+        type: integer
+    type: object
+  internal_handlers.MatchResultResponse:
+    description: Match result
+    properties:
+      awayScore:
+        example: 1
+        type: integer
+      awayTeamName:
+        example: Arsenal
+        type: string
+      homeScore:
+        example: 2
+        type: integer
+      homeTeamName:
+        example: Chelsea
+        type: string
+    type: object
+  internal_handlers.MessageData:
+    properties:
+      message:
+        example: Operation completed successfully
+        type: string
+    type: object
+  internal_handlers.MessageResponse:
+    description: Simple message response
+    properties:
+      data:
+        $ref: '#/definitions/internal_handlers.MessageData'
+      success:
+        example: true
+        type: boolean
+    type: object
+  internal_handlers.PredictionsListResponse:
+    description: Championship predictions
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_handlers.ChampionshipPredictionResponse'
+        type: array
+      success:
+        example: true
+        type: boolean
+    type: object
+  internal_handlers.SimulationStateFullResponse:
+    description: Full simulation state response
+    properties:
+      data:
+        $ref: '#/definitions/internal_handlers.SimulationStateResponse'
+      success:
+        example: true
+        type: boolean
+    type: object
+  internal_handlers.SimulationStateResponse:
+    description: Complete simulation state including standings and predictions
+    properties:
+      allMatches:
+        additionalProperties:
+          items:
+            $ref: '#/definitions/internal_handlers.MatchResultResponse'
+          type: array
+        type: object
+      currentWeekResults:
+        items:
+          $ref: '#/definitions/internal_handlers.MatchResultResponse'
+        type: array
+      leagueState:
+        $ref: '#/definitions/internal_handlers.LeagueStateResponse'
+      predictions:
+        items:
+          $ref: '#/definitions/internal_handlers.ChampionshipPredictionResponse'
+        type: array
+      standings:
+        items:
+          $ref: '#/definitions/internal_handlers.TeamStandingResponse'
+        type: array
+    type: object
+  internal_handlers.StandingsListResponse:
+    description: Current league standings
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_handlers.TeamStandingResponse'
+        type: array
+      success:
+        example: true
+        type: boolean
+    type: object
+  internal_handlers.TeamResponse:
+    description: Team information
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Manchester City
+        type: string
+      power:
+        example: 90
+        type: integer
+    type: object
+  internal_handlers.TeamStandingResponse:
+    description: Team standing in league table
+    properties:
+      drawn:
+        example: 1
+        type: integer
+      goalDifference:
+        example: 4
+        type: integer
+      goalsAgainst:
+        example: 3
+        type: integer
+      goalsFor:
+        example: 7
+        type: integer
+      lost:
+        example: 0
+        type: integer
+      played:
+        example: 3
+        type: integer
+      points:
+        example: 7
+        type: integer
+      teamId:
+        example: 1
+        type: integer
+      teamName:
+        example: Manchester City
+        type: string
+      won:
+        example: 2
+        type: integer
+    type: object
+  internal_handlers.TeamsListResponse:
+    description: List of all teams
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/internal_handlers.TeamResponse'
+        type: array
+      success:
+        example: true
+        type: boolean
+    type: object
+  internal_handlers.UpdateMatchResultRequest:
+    description: Request body for updating match scores
+    properties:
+      awayScore:
+        example: 1
+        minimum: 0
+        type: integer
+      homeScore:
+        example: 2
+        minimum: 0
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: zahid.cakici@gmail.com
+    name: API Support
+  description: A REST API for simulating a Champions League tournament
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Champions League Simulation API
+  version: "1.0"
+paths:
+  /fixtures:
+    get:
+      consumes:
+      - application/json
+      description: Returns all fixtures across all weeks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with fixtures array
+          schema:
+            $ref: '#/definitions/internal_handlers.FixturesListResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Get all fixtures
+      tags:
+      - Fixtures
+  /fixtures/{week}:
+    get:
+      consumes:
+      - application/json
+      description: Returns all fixtures for a specific week number
+      parameters:
+      - description: Week number (1-6)
+        in: path
+        name: week
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with fixtures for the week
+          schema:
+            $ref: '#/definitions/internal_handlers.FixturesListResponse'
+        "400":
+          description: Invalid week number
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Get fixtures by week
+      tags:
+      - Fixtures
+  /fixtures/generate:
+    post:
+      consumes:
+      - application/json
+      description: Creates a round-robin fixture schedule for all teams (6 weeks,
+        home and away)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with generated fixtures
+          schema:
+            $ref: '#/definitions/internal_handlers.FixturesListResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Generate fixtures
+      tags:
+      - Fixtures
+  /predictions:
+    get:
+      consumes:
+      - application/json
+      description: Returns the probability of each team winning the championship (available
+        from week 4)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with predictions array
+          schema:
+            $ref: '#/definitions/internal_handlers.PredictionsListResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Get championship predictions
+      tags:
+      - Standings
+  /simulation/match/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Manually update the score of a specific match
+      parameters:
+      - description: Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Match score update
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateMatchResultRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with updated simulation state
+          schema:
+            $ref: '#/definitions/internal_handlers.SimulationStateFullResponse'
+        "400":
+          description: Invalid match ID or request body
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Update match result
+      tags:
+      - Simulation
+  /simulation/play-all:
+    post:
+      consumes:
+      - application/json
+      description: Simulates all remaining matches until the season is complete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with final simulation state
+          schema:
+            $ref: '#/definitions/internal_handlers.SimulationStateFullResponse'
+        "400":
+          description: Bad request (e.g., season already complete)
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Play all remaining weeks
+      tags:
+      - Simulation
+  /simulation/play-week:
+    post:
+      consumes:
+      - application/json
+      description: Simulates all matches for the next week and returns updated state
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with updated simulation state
+          schema:
+            $ref: '#/definitions/internal_handlers.SimulationStateFullResponse'
+        "400":
+          description: Bad request (e.g., no more weeks to play)
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Play next week
+      tags:
+      - Simulation
+  /simulation/reset:
+    post:
+      consumes:
+      - application/json
+      description: Resets all match results and league state while keeping fixtures
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with reset confirmation
+          schema:
+            $ref: '#/definitions/internal_handlers.MessageResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Reset simulation
+      tags:
+      - Simulation
+  /simulation/state:
+    get:
+      consumes:
+      - application/json
+      description: Returns the complete current state including standings, predictions,
+        and match results
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with full simulation state
+          schema:
+            $ref: '#/definitions/internal_handlers.SimulationStateFullResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Get simulation state
+      tags:
+      - Simulation
+  /standings:
+    get:
+      consumes:
+      - application/json
+      description: Returns the current league table with points, goals, and positions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with standings array
+          schema:
+            $ref: '#/definitions/internal_handlers.StandingsListResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Get league standings
+      tags:
+      - Standings
+  /teams:
+    get:
+      consumes:
+      - application/json
+      description: Returns all teams participating in the tournament with their power
+        ratings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success response with teams array
+          schema:
+            $ref: '#/definitions/internal_handlers.TeamsListResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handlers.APIErrorResponse'
+      summary: Get all teams
+      tags:
+      - Teams
+schemes:
+- http
+- https
+swagger: "2.0"

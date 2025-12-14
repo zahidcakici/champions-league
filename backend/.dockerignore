@@ -1,0 +1,22 @@
+# Binary
+bin/
+server
+
+# Dependencies (if vendoring)
+vendor/
+
+# Test
+*.test
+coverage.out
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
